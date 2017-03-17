@@ -24,6 +24,8 @@ static NSString *const cellId = @"cellId";
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
+        
         self.textLabel.font = [UIFont systemFontOfSize:15.0f];
     }
     return self;
@@ -43,18 +45,17 @@ static NSString *const cellId = @"cellId";
 
 @end
 
-
-
 @interface CHTSelectListView ()<UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate>
 
 @property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, strong) NSArray <NSString *>*dataArray;
+@property (nonatomic, strong) NSArray <NSString *>*dataArray;//tableview cell titles
 
 @end
 
 @implementation CHTSelectListView{
     
-    CGFloat _hTable;
+    CGFloat _hTable; //store the height of tableview
+    NSInteger _selectedRow; //store last selected row
 }
 
 - (instancetype)initWithFrame:(CGRect)frame dataArray:(NSArray <NSString *>*)dataArray
@@ -63,10 +64,8 @@ static NSString *const cellId = @"cellId";
     if (self) {
         
         self.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
-//        UITapGestureRecognizer * tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(onceTap:)];
-//        tap.delegate = self;
-//        [self addGestureRecognizer:tap];
-        
+        [self addTarget:self action:@selector(onceTap) forControlEvents:UIControlEventTouchUpInside];
+        _selectedRow = -1;
         _dataArray = dataArray;
         _hTable = ROW_HEIGHT * _dataArray.count;
         _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, SCREEN_HEIGHT, CGRectGetWidth(frame), _hTable) style:UITableViewStylePlain];
@@ -76,8 +75,6 @@ static NSString *const cellId = @"cellId";
         _tableView.scrollEnabled = NO;
         [_tableView registerClass:[CHTSelectListCell class] forCellReuseIdentifier:cellId];
         [self addSubview:_tableView];
-        
-        [self addTarget:self action:@selector(onceTap) forControlEvents:UIControlEventTouchUpInside];
     }
     return self;
 }
@@ -108,31 +105,22 @@ static NSString *const cellId = @"cellId";
         frame.origin.y = SCREEN_HEIGHT - _hTable;
         _tableView.frame = frame;
         
+    } completion:^(BOOL finished) {
+        
+        if (_selectedRow >= 0) {
+
+            [_tableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:_selectedRow inSection:0] animated:YES scrollPosition:UITableViewScrollPositionTop];
+        }
+        
     }];
     
     [[UIApplication sharedApplication].keyWindow addSubview:self];
 }
 
+#pragma mark - tap event
 - (void)onceTap{
     
     [self hide];
-}
-
-- (void)onceTap:(UITapGestureRecognizer *)tap{
-    
-    if ([tap.view isKindOfClass:self.class]) {
-        
-        [self hide];
-    }
-}
-
-#pragma mark - gesture delegate
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
-    
-    if ([touch.view isKindOfClass:[self class]]) {
-        return YES;
-    }
-    return NO;
 }
 
 #pragma mark - tableview delegate
@@ -150,22 +138,15 @@ static NSString *const cellId = @"cellId";
     
     CHTSelectListCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
     cell.textLabel.text = _dataArray[indexPath.row];
-    if (indexPath.row == _selectedRow) {
-        [cell setSelected:YES animated:YES];
-    }
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
-    _selectedRow = indexPath.row;
-    [tableView reloadData];
-    
     if (_delegate && [_delegate respondsToSelector:@selector(selectListView:didSelectedRow:)]) {
         [_delegate selectListView:self didSelectedRow:indexPath.row];
     }
+    _selectedRow = indexPath.row;
     [self hide];
 }
 

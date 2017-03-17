@@ -21,7 +21,6 @@
 
 @interface CHTSelectListView : UIControl
 
-@property (nonatomic, assign) NSInteger selectedRow;
 @property (nonatomic, assign) id <CHTSelectListViewDelegate>delegate;
 
 - (instancetype)initWithFrame:(CGRect)frame dataArray:(NSArray <NSString *>*)dataArray;

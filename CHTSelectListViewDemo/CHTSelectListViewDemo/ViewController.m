@@ -15,25 +15,20 @@
 
 @end
 
-@implementation ViewController{
-    
-    NSInteger _selectedRow;
-}
-
+@implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    
+    NSArray *arr = @[@"aaa",@"bbb",@"ccc",@"eee",@"ffff"];
+    _listView = [[CHTSelectListView alloc]initWithFrame:CGRectMake(0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT) dataArray:arr];
+    _listView.delegate = self;
+
 }
 
 - (IBAction)btnClick:(id)sender {
     
-    NSArray *arr = @[@"aaa",@"bbb",@"ccc",@"eee",@"ffff"];
-    
-    _listView = [[CHTSelectListView alloc]initWithFrame:CGRectMake(0, SCREEN_HEIGHT/2, SCREEN_WIDTH, SCREEN_HEIGHT) dataArray:arr];
-    _listView.delegate = self;
-    _listView.selectedRow = _selectedRow;
-    [_listView show];
+        [_listView show];
 }
 
 #pragma mark - selectListView delegate
@@ -41,7 +36,7 @@
     
     if (selectListView == _listView) {
         
-        _selectedRow = row;
+        NSLog(@"did click %ld row",row);
     }
 }
 
