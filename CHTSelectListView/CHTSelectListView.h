@@ -15,7 +15,8 @@
 @protocol CHTSelectListViewDelegate <NSObject>
 
 @optional
-- (void)selectListView:(CHTSelectListView *)selectListView didSelectedRow:(NSInteger)row;
+- (void)selectListView:(CHTSelectListView *)selectListView
+        didSelectedRow:(NSInteger)row;
 
 @end
 
@@ -23,7 +24,8 @@
 
 @property (nonatomic, assign) id <CHTSelectListViewDelegate>delegate;
 
-- (instancetype)initWithFrame:(CGRect)frame dataArray:(NSArray <NSString *>*)dataArray;
+- (instancetype)initWithFrame:(CGRect)frame
+                    dataArray:(NSArray <NSString *>*)dataArray;
 
 - (void)show;
 
