@@ -65,7 +65,7 @@ simple select view on the bottom of main view
 
 More detail showed in the `CHTSelectListViewDemo Project`
 
-##LICENSE
+## LICENSE
 
 MIT
 
